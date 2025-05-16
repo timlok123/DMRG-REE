@@ -19,13 +19,14 @@ A_normalized = A / A_norm;
 %% c) Performing SVD on normalized A 
 
 A_matrix = reshape(A_normalized, [d1^2,d2^2]); % reshape to matrix 
-[U,S,V] = svd(A_matrix,'econ');
+[U,S,V] = svd(A_matrix,'econ');                % A = USV' 
 % Sum_of_square_diagonal = sqrt(trace(S*conj(S))); 
 Sum_of_square_diagonal = sqrt(sum(diag(S).^2));
 
+
 %% d) effective rank 
 delta_val = 1e-4;
-r_delta = sum(diag(S) > delta_val);
+r_delta = sum(diag(S) > delta_val); % S is sorted in descending order 
 
 %% e) trunciation error from diagonal S
 err_0 = sqrt(sum(diag(S(r_delta+1:end,r_delta+1:end)).^2));

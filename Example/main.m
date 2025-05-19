@@ -12,6 +12,7 @@
 chi = 16;    % maximum bond dimension
 Nsites = 50; % number of lattice sites
 
+% Define the setting of DMRG 
 OPTS.numsweeps = 4; % number of DMRG sweeps
 OPTS.display = 2;   % level of output display
 OPTS.updateon = 1;  % update MPS tensors
@@ -19,14 +20,20 @@ OPTS.maxit = 2;     % iterations of Lanczos method
 OPTS.krydim = 4;    % dimension of Krylov subspace
 
 %%%% Define Hamiltonian MPO (quantum XX model)
+% i.e. Writing the Hamitonian in MPO form => contract and it will recover 
 chid = 2;
-sP = sqrt(2)*[0,0;1,0]; sM = sqrt(2)*[0,1;0,0]; 
-sX = [0,1;1,0]; sY = [0,-1i;1i,0]; 
-sZ = [1,0;0,-1]; sI = eye(2);
+sP = sqrt(2)*[0,0;1,0]; % S^+
+sM = sqrt(2)*[0,1;0,0]; % S^-
+sX = [0,1;1,0]; 
+sY = [0,-1i;1i,0]; 
+sZ = [1,0;0,-1]; 
+sI = eye(2);
+
 M = zeros(4,4,2,2);
 M(1,1,:,:) = sI; M(4,4,:,:) = sI;
 M(1,2,:,:) = sM; M(2,4,:,:) = sP;
 M(1,3,:,:) = sP; M(3,4,:,:) = sM;
+
 ML = reshape([1;0;0;0],[4,1,1]); %left MPO boundary
 MR = reshape([0;0;0;1],[4,1,1]); %right MPO boundary
 

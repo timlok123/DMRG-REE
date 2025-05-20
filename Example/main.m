@@ -24,9 +24,9 @@ OPTS.krydim = 4;    % dimension of Krylov subspace
 chid = 2;
 sP = sqrt(2)*[0,0;1,0]; % S^+
 sM = sqrt(2)*[0,1;0,0]; % S^-
-sX = [0,1;1,0]; 
-sY = [0,-1i;1i,0]; 
-sZ = [1,0;0,-1]; 
+% sX = [0,1;1,0]; 
+% sY = [0,-1i;1i,0]; 
+% sZ = [1,0;0,-1]; 
 sI = eye(2);
 
 M = zeros(4,4,2,2);

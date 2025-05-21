@@ -26,6 +26,8 @@ function [A,sWeight,B,Ekeep] = doDMRG_MPO(A,ML,M,MR,chimax,OPTS)
 % OPTS.maxit: iterations of Lanczos method for each superblock diagonalization [integer | {2}]
 % OPTS.krydim: dimension of Krylov space in superblock diagonalization [integer > 1, {4}]
 
+% M is changed to a cell array 
+
 %%%%% set options to defaults if not specified 
 if ~isfield(OPTS,'numsweeps')
     OPTS.numsweeps = 10;
@@ -47,16 +49,19 @@ if OPTS.krydim < 2
 end
 
 %%%%% left-to-right 'warmup', put MPS in right orthogonal form
+% Extracting the information of the system from the input matrix
 Nsites = length(A);
 L{1} = ML; R{Nsites} = MR;
-chid = size(M,3); 
+chid = size(M{1},3);                                                         % Here! 
+
 for p = 1:Nsites - 1
     chil = size(A{p},1); chir = size(A{p},3);
     [qtemp,rtemp] = qr(reshape(A{p},[chil*chid,chir]),0);
     A{p} = reshape(qtemp,[chil,chid,chir]);
     A{p+1} = ncon({rtemp,A{p+1}},{[-1,1],[1,-2,-3]})/norm(rtemp(:));
-    L{p+1} = ncon({L{p},M,A{p},conj(A{p})},{[2,1,4],[2,-1,3,5],[4,5,-3],[1,3,-2]});
+    L{p+1} = ncon({L{p},M{p},A{p},conj(A{p})},{[2,1,4],[2,-1,3,5],[4,5,-3],[1,3,-2]});  % Here! 
 end
+
 chil = size(A{Nsites},1); chir = size(A{Nsites},3);
 [qtemp,stemp] = qr(reshape(A{Nsites},[chil*chid,chir]),0);
 A{Nsites} = reshape(qtemp,[chil,chid,chir]);
@@ -77,7 +82,7 @@ for k = 1:OPTS.numsweeps+1
         chil = size(A{p},1); chir = size(A{p+1},3);
         psiGround = reshape(ncon({A{p},A{p+1},sWeight{p+2}},{[-1,-2,1],[1,-3,2],[2,-4]}),[chil*chid^2*chir,1]);
         if OPTS.updateon 
-            [psiGround,Ekeep(end+1)] = eigLanczos(psiGround,OPTS,@doApplyMPO,{L{p},M,M,R{p+1}});
+            [psiGround,Ekeep(end+1)] = eigLanczos(psiGround,OPTS,@doApplyMPO,{L{p},M{p},M{p+1},R{p+1}});        % Here M(p) & M(p+1)? Same order? 
         end
         [utemp,stemp,vtemp] = svd(reshape(psiGround,[chil*chid,chid*chir]),'econ');
         chitemp = min(min(size(stemp)),chimax);
@@ -86,7 +91,7 @@ for k = 1:OPTS.numsweeps+1
         B{p+1} = reshape(vtemp(:,1:chitemp)',[chitemp,chid,chir]);
             
         %%%%% new block Hamiltonian MPO
-        R{p} = ncon({M,R{p+1},B{p+1},conj(B{p+1})},{[-1,2,3,5],[2,1,4],[-3,5,4],[-2,3,1]});
+        R{p} = ncon({M{p+1},R{p+1},B{p+1},conj(B{p+1})},{[-1,2,3,5],[2,1,4],[-3,5,4],[-2,3,1]});                 % Here R(p) comes from M(p)+1? 
         
        %%%%% display energy
         if OPTS.display == 2
@@ -107,16 +112,16 @@ for k = 1:OPTS.numsweeps+1
         chil = size(B{p},1); chir = size(B{p+1},3);
         psiGround = reshape(ncon({sWeight{p},B{p},B{p+1}},{[-1,1],[1,-2,2],[2,-3,-4]}),[chil*chid^2*chir,1]);
         if OPTS.updateon 
-            [psiGround,Ekeep(end+1)] = eigLanczos(psiGround,OPTS,@doApplyMPO,{L{p},M,M,R{p+1}});
+            [psiGround,Ekeep(end+1)] = eigLanczos(psiGround,OPTS,@doApplyMPO,{L{p},M{p},M{p+1},R{p+1}});         % Here M(p) & M(p+1)? Same order?
         end
         [utemp,stemp,vtemp] = svd(reshape(psiGround,[chil*chid,chid*chir]),'econ');
         chitemp = min(min(size(stemp)),chimax);
         A{p} = reshape(utemp(:,1:chitemp),[chil,chid,chitemp]);
-        sWeight{p+1} = stemp(1:chitemp,1:chitemp)./sqrt(sum(diag(stemp(1:chitemp,1:chitemp)).^2));
+        sWeight{p+1} = stemp(1:chitemp,1:chitemp)./sqrt(sum(diag(stemp(1:chitemp,1:chitemp)).^2));               
         B{p+1} = reshape(vtemp(:,1:chitemp)',[chitemp,chid,chir]);
             
         %%%%% new block Hamiltonian
-        L{p+1} = ncon({L{p},M,A{p},conj(A{p})},{[2,1,4],[2,-1,3,5],[4,5,-3],[1,3,-2]});
+        L{p+1} = ncon({L{p},M{p},A{p},conj(A{p})},{[2,1,4],[2,-1,3,5],[4,5,-3],[1,3,-2]});                       % Here M(p)? Same order?
         
         %%%%% display energy
         if OPTS.display == 2

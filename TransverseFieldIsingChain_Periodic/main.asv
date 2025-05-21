@@ -5,6 +5,9 @@
 %
 % by Glen Evenbly (c) for www.tensors.net, (v1.1) - last modified 21/1/2019
 
+%%%%% Example 1: XX model %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Set simulation options
 chi = 16;    % maximum bond dimension
 Nsites = 32; % number of lattice sites 

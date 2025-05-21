@@ -6,8 +6,8 @@
 % by Glen Evenbly (c) for www.tensors.net, (v1.1) - last modified 21/1/2019
 
 %% Set simulation options
-chi = 16;    % maximum bond dimension
-Nsites = 32; % number of lattice sites 
+chi = 512;    % maximum bond dimension
+Nsites = 64; % number of lattice sites 
 
 % Define the setting of DMRG 
 OPTS.numsweeps = 10; % number of DMRG sweeps
@@ -104,12 +104,31 @@ normalized_ground_state_energy = E_gs/(Nsites);
 %%%% Showing the convergence of ground state energy 
 
 figure;
-hold off;
+%hold off;
 %semilogy(abs(Ekeep1 - min(Ekeep1)), 'LineWidth', 1.5); % Energy error for chi = initial bond dimension
-hold on;
+%hold on;
 semilogy(abs(Ekeep2 - min(Ekeep2)), 'LineWidth', 1.5); % Energy error for chi = 32
 xlabel('Update Step');
 ylabel('Energy Error');
 legend(['\chi = ', num2str(min(chi))], ['\chi = ', num2str(chi)]);
 title('DMRG Energy Convergence');
 grid on;
+
+
+%% Show the Renyi Entanglement Entropy 
+REE_array=zeros(1,Nsites+1);
+normalized_lA_array=(0:Nsites)/Nsites;
+
+for lA = 1:Nsites+1
+    REE_array(lA) = -log(trace(sWeight{lA}.^4));
+end
+
+figure;
+plot(normalized_lA_array, REE_array, '-o');
+xlabel('Normalized l_A');
+ylabel('REE');
+title('REE vs Normalized l_A');
+grid on;
+
+
+

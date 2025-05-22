@@ -6,12 +6,12 @@
 % by Glen Evenbly (c) for www.tensors.net, (v1.1) - last modified 21/1/2019
 
 %% Set simulation options
-chi = 256;    % maximum bond dimension
-Nsites = 32; % number of lattice sites 
+chi = 64;    % maximum bond dimension
+Nsites = 8; % number of lattice sites 
 
 % Define the setting of DMRG 
 OPTS.numsweeps = 10; % number of DMRG sweeps
-OPTS.display = 2;   % level of output display
+OPTS.display = 1;   % level of output display
 OPTS.updateon = 1;  % update MPS tensors
 OPTS.maxit = 10;     % iterations of Lanczos method
 OPTS.krydim = 10;    % dimension of Krylov subspace
@@ -95,14 +95,13 @@ disp(['Normalized ground State Energy (64): ', num2str(E_gs/(Nsites))]);
 normalized_ground_state_energy = E_gs/(Nsites); 
 
 %%%% Showing the convergence of ground state energy 
-
-figure;
-semilogy(abs(Ekeep - min(Ekeep)), 'LineWidth', 1.5); % Energy error for chi = 32
-xlabel('Update Step');
-ylabel('Energy Error');
-legend(['\chi = ', num2str(chi)]);
-title('DMRG Energy Convergence');
-grid on;
+% figure;
+% semilogy(abs(Ekeep - min(Ekeep)), 'LineWidth', 1.5); % Energy error for chi = 32
+% xlabel('Update Step');
+% ylabel('Energy Error');
+% legend(['\chi = ', num2str(chi)]);
+% title('DMRG Energy Convergence');
+% grid on;
 
 
 %% Show the Renyi Entanglement Entropy 
@@ -113,15 +112,17 @@ for lA = 1:Nsites+1
     REE_array(lA) = -log(trace(sWeight{lA}.^4));
 end
 
-figure;
-plot(normalized_lA_array, REE_array, '-o');
-xlabel('Normalized l_A');
-ylabel('REE');
-title('REE vs Normalized l_A');
-grid on;
+% figure;
+% plot(normalized_lA_array, REE_array, '-o');
+% xlabel('Normalized l_A');
+% ylabel('REE');
+% title('REE vs Normalized l_A');
+% grid on;
 
 %% Save the data for manipulation for further manipulation 
-save("A_MPS.mat","A");
-save(sprintf('REE_array_%d', Nsites),"REE_array")
+save(sprintf('DMRG_data_%d.mat', Nsites));
+
+%% Load the data 
+% DMRG_data8 = load("DMRG_data_8.mat");
 
 

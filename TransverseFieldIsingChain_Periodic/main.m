@@ -123,6 +123,6 @@ end
 save(sprintf('DMRG_data_%d.mat', Nsites));
 
 %% Load the data 
-% DMRG_data8 = load("DMRG_data_8.mat");
+% DMRG_data8 = load("DMRG_data_8.mat").REE_array;
 
 

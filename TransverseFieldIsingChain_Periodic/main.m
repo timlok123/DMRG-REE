@@ -123,6 +123,23 @@ end
 save(sprintf('DMRG_data_%d.mat', Nsites));
 
 %% Load the data 
-% DMRG_data8 = load("DMRG_data_8.mat").REE_array;
+REE_array_64 = load("DMRG_data_64.mat").REE_array;
+
+
+%% Plot the figure (after loading)
+Nsites = 64;
+normalized_lA_array=(0:Nsites)/Nsites;
+
+figure;
+plot(normalized_lA_array, REE_array, '-o');
+xlabel('Normalized l_A');
+ylabel('REE');
+title('REE vs Normalized l_A');
+grid on;
+
+
+
+
+
 
 

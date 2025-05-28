@@ -6,8 +6,8 @@
 % by Glen Evenbly (c) for www.tensors.net, (v1.1) - last modified 21/1/2019
 
 %% Set simulation options
-chi = 64;    % maximum bond dimension
-Nsites = 8; % number of lattice sites 
+chi = 256;    % maximum bond dimension
+Nsites = 20; % number of lattice sites 
 
 % Define the setting of DMRG 
 OPTS.numsweeps = 10; % number of DMRG sweeps
@@ -123,11 +123,10 @@ end
 save(sprintf('DMRG_data_%d.mat', Nsites));
 
 %% Load the data 
-REE_array_64 = load("DMRG_data_64.mat").REE_array;
-
+REE_array = load("DMRG_data_20.mat").REE_array;
 
 %% Plot the figure (after loading)
-Nsites = 64;
+Nsites = 20;
 normalized_lA_array=(0:Nsites)/Nsites;
 
 figure;
@@ -136,6 +135,8 @@ xlabel('Normalized l_A');
 ylabel('REE');
 title('REE vs Normalized l_A');
 grid on;
+
+writematrix(REE_array, 'REE_array.csv');
 
 
 
